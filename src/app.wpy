@@ -1,0 +1,113 @@
+<style lang="less">
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+</style>
+
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+import { setStore } from 'wepy-redux'
+import configStore from './store'
+
+const store = configStore()
+setStore(store)
+
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/index',
+      'pages/mine',
+      'pages/world',
+      'pages/search'
+    ],
+    //定义页面样式
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTitleText: 'WeChat',
+      navigationBarTextStyle: 'black'
+    },
+    "tabBar": {
+     "list": [{
+       "pagePath": "pages/index",
+       "selectedColor":"#d4237a",
+       "text": "国内电影",
+       "backgroundColor":"#ff0000",
+       "iconPath":"./images/china.png",
+       "selectedIconPath":"./images/china_HL.png"
+     }, {
+        "pagePath": "pages/world",
+        "selectedColor":"#d4237a",
+        "text": "全球电影",
+        "iconPath":"./images/global25.png",
+        "selectedIconPath":"./images/global25_HL.png"
+      }, {
+        "pagePath": "pages/search",
+        "selectedColor":"#d4237a",
+        "text": "搜索",
+        "iconPath":"./images/sousuo.png",
+        "selectedIconPath":"./images/sousuo_HL.png"
+      }, {
+        "pagePath": "pages/mine",
+        "selectedColor":"#d4237a",
+        "text": "我的信息",
+        "iconPath":"./images/gerenziliao.png",
+        "selectedIconPath":"./images/gerenziliao_HL.png"
+      }]
+ },
+ "networkTimeout": {
+   "request": 10000,
+   "downloadFile": 10000
+ },
+ "debug": true
+  }
+
+  globalData = {
+    userInfo: null
+  }
+
+  constructor () {
+    super()
+    this.use('requestfix')
+  }
+
+  onLaunch() {
+    this.testAsync()
+    console.log("-------")
+    console.log(this)
+    console.log("-------")
+  }
+
+  sleep (s) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve('promise resolved')
+      }, s * 1000)
+    })
+  }
+
+  async testAsync () {
+    const data = await this.sleep(3)
+    console.log(data)
+  }
+
+  getUserInfo(cb) {
+    const that = this
+    if (this.globalData.userInfo) {
+      return this.globalData.userInfo
+    }
+    wepy.getUserInfo({
+      success (res) {
+        that.globalData.userInfo = res.userInfo
+        cb && cb(res.userInfo)
+      }
+    })
+  }
+}
+</script>
