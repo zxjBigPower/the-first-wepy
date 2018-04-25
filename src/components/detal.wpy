@@ -1,0 +1,61 @@
+<template lang="wxml">
+    <view>
+    <view>{{strings}} </view>
+      <scroll-view class="box" scroll-x="true" >
+      <!--  display: inline-block-->
+        <view class="box-e" wx:for="{{list}}" wx:ke="id">
+          <image src="{{item.images.large}}" />
+            <text>{{item.title}}</text>
+        </view>
+      </scroll-view>
+    </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class Com extends wepy.component {
+    components = {};
+    props={
+      list:{
+        type:Array,
+        default:[]
+      },
+      strings:{
+        type:String,
+        default:"aaaaaa"
+      }
+    }
+    data = {};
+    methods = {};
+
+    events = {};
+    // Other properties
+}
+</script>
+
+<style lang="less">
+.box{
+  white-space: nowrap;
+  display: flex;
+  .box-e{
+    width: 200rpx;
+    height: 290rpx;
+     display: inline-block;
+     position:relative;
+     text-align: center;
+     image{
+       width:180rpx;
+       height:250rpx;
+     }
+     text{
+       position:absolute;
+       width:100%;
+       bottom:0;
+       left:0;
+       text-align:center;
+       font-size:25rpx;
+       color:orange;
+     }
+  }
+}
+</style>

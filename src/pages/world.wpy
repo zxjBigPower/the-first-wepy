@@ -1,5 +1,7 @@
 <script>
   import wepy from "wepy"
+  import detal from "../components/detal"
+  import {getData} from "../components/common"
   export default class Index extends wepy.page{
     data={
       comingSoonList:["aada"],
@@ -7,57 +9,114 @@
       indicatorDots: true,
       autoplay: false,
       interval: 5000,
-      duration: 1000
+      duration: 1000,
+      inTheaterList:[],
+      comingSoonTitle:"",
+      inTheaterTitle:"",
+      testArray:[],
+      top250List:[],
+      top250ListTitle:""
     };
-
-
+    methods={
+      upper: function(e) {
+        console.log(e)
+      },
+      lower: function(e) {
+        console.log(e)
+      },
+      scroll: function(e) {
+        console.log(e)
+      },
+      tap: function(e) {
+        for (var i = 0; i < order.length; ++i) {
+          if (order[i] === this.data.toView) {
+            this.setData({
+              toView: order[i + 1]
+            })
+            break
+          }
+        }
+      },
+      tapMove: function(e) {
+        this.setData({
+          scrollTop: this.data.scrollTop + 10
+        })
+      }
+    }
+    components={
+      scrollcom:detal,
+      scrollcom1:detal,
+      scrollcom0:detal
+    }
     onLoad(){
-    //  this.comingSoonList=["asasas","sdfsf"];
-      this.strData="ssssss"
-      let _this=this
-      wx.request({
-      url : "https://douban.uieee.com/v2/movie/coming_soon",
-      data: {},
-      header:{
-          "content-type":'application/xml'
-      },
-      success: (res) =>{
-          //console.log(res.data);
-          var data = res.data;
-            //this.comingSoonList=res.data.subjects
-
-            _this.comingSoonList=["asasas","sdfsf"]
-            console.log(_this.comingSoonList)
-          // currentPage.setData({
-          //     list : data.subjects
-          // })
-      },
-      });
+      var  that=this;
+      //获取即将上线电影数据
+      getData("https://douban.uieee.com/v2/movie/coming_soon",{},"GET").then(res=>{
+        this.comingSoonList=res.subjects;
+        that.strData="aaaaa";
+        that.comingSoonTitle=res.title;
+        //异步加载要$apply()重新更新
+        that.$apply();
+      })
+      //获取正在热映电影数据
+      getData("https://douban.uieee.com/v2/movie/in_theaters",{},"GET").then(res=>{
+        //console.log(res)
+        that.inTheaterList=res.subjects;
+        that.inTheaterTitle=res.title;
+        that.$apply();
+      })
+      //top250
+      getData("https://douban.uieee.com/v2/movie/top250",{},"GET").then(res=>{
+          //console.log(res)
+          that.top250List=res.subjects;
+          that.top250ListTitle=res.title;
+          that.$apply();
+        })
     }
   }
 </script>
 <template>
 <view>
-  <swiper indicator-dots="{{indicatorDots}}"
-  autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}">
-  <block wx:for="{{comingSoonList}}" wx:for-index="index" wx:key="id">
-    <swiper-item>
-      <text>{{index}}</text>
-      <text>{{item.title}}</text>
-      <image src="{{item.images.large}}" class="slide-image" width="100%" height="150"/>
-    </swiper-item>
-  </block>
-</swiper>
-<block wx:for="{{comingSoonList}}" wx:for-index="index" wx:key="id">
-    <text>{{index}}</text>
-    <text>{{item.title}}</text>
-    <image src="{{item.images.large}}" class="slide-image" width="100%" height="150"/>
-</block>
-  <text>1111----{{comingSoonList}}-----</text>
-  <text>{{strData}}</text>
-  egrg
+    <!-- <swiper indicator-dots="{{indicatorDots}}"
+    autoplay="{{autoplay}}" interval="{{interval}}" duration="{{duration}}">
+      <block wx:for="{{comingSoonList}}" wx:for-index="index" wx:key="id">
+        <swiper-item class="each-item">
+          <text class="title">{{item.title}}</text>
+          <image src="{{item.images.large}}" class="slide-image" width="100%" height="500"/>
+        </swiper-item>
+      </block>
+    </swiper> -->
+  <!-- <view>
+    <text>{{strData}}</text>
+  </view> -->
+  <scrollcom0 :list.sync="comingSoonList" :strings.sync="comingSoonTitle"></scrollcom0>
+  <!-- 正在热映  组件引用-->
+<scrollcom :list.sync="inTheaterList" :strings.sync="inTheaterTitle"></scrollcom>
+  <!-- <scroll-view scroll-x="true" style=" white-space: nowrap; display: flex" >
+ display: inline-block
+  <view style="background: red; width: 200px; height: 100px; display: inline-block" ></view>
+  <view style="background: green; width: 200px; height: 100px; display: inline-block"></view>
+  <view style="background: blue; width: 200px; height: 100px; display: inline-block"></view>
+  <view style="background: yellow; width: 200px; height: 100px; display: inline-block"></view>
+</scroll-view> -->
+<scrollcom1 :list.sync="top250List" :strings.sync="top250ListTitle"></scrollcom1>
 </view>
 </template>
 <style lang="less">
+.each-item{
+  position: relative;
+  .title{
+    position: absolute;
+    top: 0;
+    width: 100%;
+    text-align: center;
+    font-size: 30rpx;
+    color: red;
+  }
+  .slide-image{
+    width: 100%;
+  }
+}
+
 
 </style>
