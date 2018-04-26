@@ -15,38 +15,21 @@
       inTheaterTitle:"",
       testArray:[],
       top250List:[],
-      top250ListTitle:""
+      top250ListTitle:"",
+      weeklyList:[],
+      weeklyTitle:"",
+      usBoxList:[],
+      usBoxTitle:""
     };
     methods={
-      upper: function(e) {
-        console.log(e)
-      },
-      lower: function(e) {
-        console.log(e)
-      },
-      scroll: function(e) {
-        console.log(e)
-      },
-      tap: function(e) {
-        for (var i = 0; i < order.length; ++i) {
-          if (order[i] === this.data.toView) {
-            this.setData({
-              toView: order[i + 1]
-            })
-            break
-          }
-        }
-      },
-      tapMove: function(e) {
-        this.setData({
-          scrollTop: this.data.scrollTop + 10
-        })
-      }
     }
     components={
       scrollcom:detal,
       scrollcom1:detal,
-      scrollcom0:detal
+      scrollcom0:detal,
+      scrollcom2:detal,
+      scrollcom3:detal,
+      scrollcom4:detal
     }
     onLoad(){
       var  that=this;
@@ -70,6 +53,20 @@
           //console.log(res)
           that.top250List=res.subjects;
           that.top250ListTitle=res.title;
+          that.$apply();
+        })
+        //  /v2/movie/weekly
+        //  口碑榜
+        getData("https://douban.uieee.com/v2/movie/weekly",{},"GET").then(res=>{
+          that.weeklyList=res.subjects;
+          that.weeklyTitle=res.title
+          that.$apply();
+        })
+        //  /v2/movie/us_box
+        //  北美票房榜
+        getData("https://douban.uieee.com/v2/movie/us_box",{},"GET").then(res=>{
+          that.usBoxList=res.subjects;
+          that.usBoxTitle=res.title
           that.$apply();
         })
     }
@@ -100,6 +97,8 @@
   <view style="background: yellow; width: 200px; height: 100px; display: inline-block"></view>
 </scroll-view> -->
 <scrollcom1 :list.sync="top250List" :strings.sync="top250ListTitle"></scrollcom1>
+<scrollcom2 :list.sync="weeklyList" :strings.sync="weeklyTitle"></scrollcom2>
+<scrollcom3 :list.sync="usBoxList" :strings.sync="usBoxTitle"></scrollcom3>
 </view>
 </template>
 <style lang="less">

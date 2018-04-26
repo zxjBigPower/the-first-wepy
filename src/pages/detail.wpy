@@ -1,0 +1,117 @@
+<script>
+  import wepy from "wepy"
+  import {getData} from "../components/common"
+  import videoDialog from "../components/video"
+  export default class Index extends wepy.page{
+    data={
+      bigData:"",
+      showVideo:false,
+      videoSource:""
+    }
+    components={
+      videoDialog:videoDialog
+    }
+  onLoad(options){
+    let _this=this
+    //console.log(options.key)
+    getData("https://douban.uieee.com/v2/movie/subject/"+options.key,{},"GET").then(res=>{
+      console.log(res)
+      _this.bigData=res;
+      _this.$apply();
+    })
+  }
+  methods={
+    showVideo(source){
+      console.log(source)
+      this.showVideo=true;
+      this.videoSource=source;
+    }
+  }
+
+  }
+</script>
+<template>
+<view>
+  <image class="bigImg" src="{{bigData.images.large}}" alt=""/>
+  <view class="label">
+    <text wx:for="{{bigData.tags}}"  wx:key="id">
+      {{item}}
+    </text>
+  </view>
+<view>
+  <text>剧照</text>
+  <scroll-view class="scroll" scroll-x="true">
+    <view class="each" wx:for="{{bigData.photos}}">
+      <image src="{{item.image}}" />
+    </view>
+  </scroll-view>
+  <text>
+    简介
+  </text>
+  <view class="movieInfo">
+    <text>
+      {{bigData.summary}}
+    </text>
+  </view>
+  <text>预告片</text>
+   <scroll-view class="scroll" scroll-x="true">
+    <view class="each" wx:for="{{bigData.trailers}}">
+      <!-- <video src="{{item}}" controls></video> -->
+      <image class="poster" src="{{item.medium}} " @tap="showVideo({{item.resource_url}})"/>
+    </view>
+  </scroll-view>
+  <videoDialog :showThis.sync="showVideo" :videoUrl.sync="videoSource"></videoDialog>
+</view>
+</view>
+</template>
+<style lang="less">
+  .bigImg{
+    width:405rpx;
+    height:600rpx;
+    display: block;
+    margin: 10rpx auto;
+  }
+  .label{
+    width: 500rpx;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    text{
+      font-size:26rpx;
+      line-height:16rpx;
+      height:45rpx;
+      color:#999;
+      background-color:#eee;
+      border-radius:10rpx;
+      border:1rpx solid #ccc;
+      padding:5rpx 15rpx;
+      margin: 10rpx 5rpx
+    }
+  }
+  .scroll{
+    display: flex;
+    white-space: nowrap;
+    .each{
+       display: inline-block;
+       padding: 5rpx;
+      image{
+        width: 300rpx;
+        height: 300rpx;
+      }
+      .poster{
+        width: 400rpx;
+        height:225rpx;
+      }
+    }
+  }
+  .movieInfo{
+    width: 600rpx;
+    margin: 0 auto;
+    text{
+      color: #666;
+      font-size: 22rpx;
+      padding: 2em;
+
+    }
+  }
+</style>

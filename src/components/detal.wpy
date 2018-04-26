@@ -3,9 +3,13 @@
     <view>{{strings}} </view>
       <scroll-view class="box" scroll-x="true" >
       <!--  display: inline-block-->
-        <view class="box-e" wx:for="{{list}}" wx:ke="id">
-          <image src="{{item.images.large}}" />
-            <text>{{item.title}}</text>
+        <view class="box-e" wx:for="{{list}}" wx:key="id">
+          <navigator url="../pages/detail?key={{item.id?item.id:item.subject.id}}">
+            <view>
+              <image src="{{item.images.small?item.images.small:item.subject.images.small}}" />
+              <text>{{item.title?item.title:item.subject.title}}</text>
+            </view>
+          </navigator>
         </view>
       </scroll-view>
     </view>
@@ -55,6 +59,9 @@ export default class Com extends wepy.component {
        text-align:center;
        font-size:25rpx;
        color:orange;
+       overflow: hidden;
+       white-space: nowrap;
+       text-overflow: ellipsis;
      }
   }
 }

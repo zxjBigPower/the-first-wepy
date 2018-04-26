@@ -24,7 +24,8 @@ export default class extends wepy.app {
       'pages/index',
       'pages/mine',
       'pages/world',
-      'pages/search'
+      'pages/search',
+      'pages/detail'
     ],
     //定义页面样式
     window: {
