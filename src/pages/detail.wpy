@@ -24,7 +24,9 @@
     showVideo(source){
       console.log(source)
       this.showVideo=true;
+      console.log(this.showVideo)
       this.videoSource=source;
+      this.$apply();
     }
   }
 

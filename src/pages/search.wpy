@@ -2,21 +2,128 @@
   import wepy from "wepy"
   import {getData} from "../components/common"
   export default class Index extends wepy.page{
+    data={
+      key:"",
+      searchArray:[],
+      searchNum:0
+    }
   onLoad(){
-    getData("https://douban.uieee.com//v2/movie/search?q=",{},"GET").then(res=>{
-      console.log(res)
-    })
-  }
 
+  }
+  methods={
+    // bindKeyInput(e){
+    //   console.log(e.detail.value)
+    // },
+    searching(e){
+      let that=this
+      console.log(e.detail.value)
+      //console.log(1212121212)
+      this.key=e.detail.value?e.detail.value:this.key;
+      getData("https://douban.uieee.com//v2/movie/search?q="+this.key,{},"GET").then(res=>{
+        console.log(res);
+        that.searchArray=res.subjects;
+        that.searchNum=res.subjects.length;
+        console.log(that.searchArray)
+        that.$apply();
+      })
+    }
+  }
   }
 </script>
 <template>
 <view>
+  <view class="bg" @tap="clear"></view>
   <view class="section">
-    <input placeholder="这是一个可以自动聚焦的input" auto-focus/> <button>搜索</button>
+    <input placeholder="请输入搜索信息" auto-focus @input="searching"/> <button @tap="searching">搜索</button>
   </view>
+  <view class="searchNum" wx:if="{{searchNum>0?true:false}}">
+  <text>共搜索到</text> <text class="red">{{searchNum}}</text> <text>条数据</text>
+  </view>
+  <scroll-view scroll-y class="ul" wx:if="{{searchNum>0?true:false}}">
+    <block wx:for="{{searchArray}}" wx:key="id">
+      <navigator url="../pages/detail?key={{item.id?item.id:item.subject.id}}">
+        <view class="li"><text class="title">{{item.title}}</text> <text class="year">{{item.year}}</text><image src="{{item.images.small}}" class="juzhao"/>
+        </view>
+      </navigator>
+    </block>
+
+  </scroll-view>
+
 </view>
 </template>
 <style lang="less">
-
+.bg{
+  position: fixed;
+  width: 100%;
+  height:100%;
+}
+.section{
+  width: 600rpx;
+  margin: 50rpx auto 0;
+  display: flex;
+    justify-content: space-around;
+  input{
+      width: 70%;
+      height: 57rpx;
+      border: 1px solid #ddd;
+      flex: 7;
+      border-radius: 10rpx;
+      line-height: 40rpx;
+      font-size: 28rpx;
+      padding-left: 10rpx;
+      margin-right: 5rpx;
+  }
+  button{
+    flex: 2;
+    display: inline-block;
+    width:25%;
+    height: 57rpx;
+    background-color: orange;
+    color: white;
+    text-align: center;
+    line-height: 57rpx;
+    font-size: 28rpx;
+  }
+}
+.searchNum{
+    width: 600rpx;margin: 0 auto;font-size: 26rpx;display: flex;justify-content: left;align-items:center;
+    .red{
+      color: red;
+      font-size: 36rpx;
+    }
+}
+.ul{
+  max-height: 600rpx;
+  width: 600rpx;
+  overflow-y: auto;
+  margin: 0 auto;
+  border-bottom: 1px dashed #ddd;
+  border-left: 1px dotted #ddd;
+  border-right: 1px dotted #ddd;
+  .li{
+      height:100rpx;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 24rpx;
+    .title{
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      flex: 5;
+    }
+    .year{
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      flex: 5;
+    }
+    .juzhao{
+      flex: 2;
+      width:60rpx;
+      height: 98rpx;
+    }
+  }
+}
 </style>
